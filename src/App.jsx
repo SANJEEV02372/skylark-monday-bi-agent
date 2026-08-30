@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { MessageSquare, BarChart3, FileText, Shield, Settings, Zap, ArrowUpRight } from 'lucide-react';
+import { MessageSquare, BarChart3, FileText, Shield, Settings, Sparkles, RefreshCw } from 'lucide-react';
 import ChatInterface from './components/ChatInterface';
 import DashboardOverview from './components/DashboardOverview';
 import LeadershipBrief from './components/LeadershipBrief';
@@ -10,8 +10,8 @@ import { computeExecutiveKPIs, getSectorAnalysis, getFunnelMetrics, getRevenueWa
 import { correlateBoards, auditDataQuality } from './services/dataResilience';
 
 const TABS = [
-  { id: 'chat', label: 'Executive Copilot', icon: MessageSquare },
-  { id: 'dashboard', label: 'BI Dashboard', icon: BarChart3 },
+  { id: 'chat', label: 'Executive Copilot', icon: MessageSquare, badge: 'AI' },
+  { id: 'dashboard', label: 'BI Analytics', icon: BarChart3 },
   { id: 'leadership', label: 'Leadership Updates', icon: FileText },
   { id: 'quality', label: 'Data Quality', icon: Shield },
 ];
@@ -65,34 +65,39 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#09090B]">
-        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin" />
-        <p className="text-xs font-mono text-zinc-400">LOADING SKYLARK INTELLIGENCE ENGINE...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#09090B] text-white">
+        <div className="w-9 h-9 rounded-xl bg-white text-black font-bold flex items-center justify-center text-sm shadow-xl animate-pulse">
+          S
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          <p className="text-xs font-mono text-zinc-400 tracking-wider">INITIALIZING SKYLARK BI ENGINE...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans">
-      {/* High-Quality SaaS Header Bar */}
-      <header className="border-b border-zinc-800/80 bg-[#09090B]/90 backdrop-blur-md sticky top-0 z-50">
+    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans antialiased selection:bg-zinc-800 selection:text-white">
+      {/* High-Impact Top Header */}
+      <header className="border-b border-zinc-800/80 bg-[#09090B]/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-[1550px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           
-          {/* Brand Logo & Name */}
+          {/* Logo & Brand Identity */}
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-md bg-white text-black flex items-center justify-center font-bold text-xs shadow-sm">
+            <div className="w-7 h-7 rounded-lg bg-white text-black font-extrabold flex items-center justify-center text-xs shadow-md">
               S
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-white tracking-tight">Skylark Drones</span>
-                <span className="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-300 px-1.5 py-0.5 rounded border border-zinc-700">BI Agent</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight">Skylark Drones</span>
+              <span className="hidden sm:inline-block text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+                EXECUTIVE BI AGENT
+              </span>
             </div>
           </div>
 
-          {/* Minimalist SaaS Tab Selector */}
-          <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-lg border border-zinc-800">
+          {/* Tab Navigation */}
+          <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-xl border border-zinc-800/80">
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -100,43 +105,49 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-zinc-800 text-white shadow-sm font-semibold'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                      ? 'bg-zinc-800 text-white font-semibold shadow-sm border border-zinc-700/60'
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-zinc-500'}`} />
                   <span className="hidden sm:inline">{tab.label}</span>
+                  {tab.badge && (
+                    <span className="text-[9px] font-mono bg-white text-black font-bold px-1 rounded sm:ml-0.5">
+                      {tab.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Controls */}
-          <div className="flex items-center gap-3">
-            <div className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono border ${
+          {/* Connection Status & Settings */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium border ${
               isLive
-                ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/60'
+                ? 'bg-emerald-950/50 text-emerald-400 border-emerald-800/60'
                 : 'bg-zinc-900 text-zinc-400 border-zinc-800'
             }`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isLive ? 'bg-emerald-400' : 'bg-zinc-500'}`} />
-              {isLive ? 'LIVE MONDAY API' : 'DEMO MODE'}
+              <div className={`w-1.5 h-1.5 rounded-full ${isLive ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-500'}`} />
+              <span className="hidden sm:inline">{isLive ? 'LIVE MONDAY API' : 'DEMO MODE'}</span>
+              <span className="sm:hidden">{isLive ? 'LIVE' : 'DEMO'}</span>
             </div>
 
             <button
               onClick={() => setShowSettings(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-all shadow-sm"
             >
               <Settings className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Monday.com</span>
+              <span className="hidden sm:inline">Monday.com</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Body */}
-      <main className="flex-1 max-w-[1550px] w-full mx-auto px-4 sm:px-6 py-6">
+      {/* Main Container */}
+      <main className="flex-1 max-w-[1550px] w-full mx-auto px-4 sm:px-6 py-5 sm:py-6">
         {activeTab === 'chat' && (
           <ChatInterface
             deals={deals}
