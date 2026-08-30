@@ -10,13 +10,13 @@ const formatValue = (val) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload) return null;
   return (
-    <div className="bg-[#1a2236] border border-white/10 rounded-lg px-4 py-3 shadow-xl text-xs">
-      <p className="font-semibold text-white mb-1.5">{label}</p>
+    <div className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 shadow-2xl text-xs">
+      <p className="font-semibold text-white mb-1">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2 py-0.5">
-          <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: entry.color }} />
-          <span className="text-slate-400">{entry.name}:</span>
-          <span className="text-white font-medium">{formatValue(entry.value)}</span>
+          <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: entry.color }} />
+          <span className="text-zinc-400">{entry.name}:</span>
+          <span className="text-white font-mono font-medium">{formatValue(entry.value)}</span>
         </div>
       ))}
     </div>
@@ -24,22 +24,22 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function SectorChart({ data }) {
-  if (!data || data.length === 0) return <p className="text-xs text-slate-500">No sector data available.</p>;
+  if (!data || data.length === 0) return <p className="text-xs text-zinc-500">No sector data available.</p>;
 
   const keys = Object.keys(data[0]).filter(k => k !== 'name');
-  const colors = ['#38BDF8', '#A855F7', '#10B981', '#F59E0B', '#F43F5E', '#6366F1'];
+  const colors = ['#FFFFFF', '#A1A1AA', '#34D399', '#52525B'];
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56 sm:h-64">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+        <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-          <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} tickFormatter={formatValue} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} />
+          <XAxis dataKey="name" tick={{ fill: '#A1A1AA', fontSize: 10 }} axisLine={{ stroke: '#27272A' }} />
+          <YAxis tick={{ fill: '#A1A1AA', fontSize: 9 }} tickFormatter={formatValue} axisLine={{ stroke: '#27272A' }} width={45} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-          <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: '#A1A1AA' }} />
           {keys.map((key, i) => (
-            <Bar key={key} dataKey={key} fill={colors[i % colors.length]} radius={[4, 4, 0, 0]} maxBarSize={40} />
+            <Bar key={key} dataKey={key} fill={colors[i % colors.length]} radius={[3, 3, 0, 0]} maxBarSize={32} />
           ))}
         </BarChart>
       </ResponsiveContainer>

@@ -7,32 +7,32 @@ const formatValue = (val) => {
   return `₹${(val / 1000).toFixed(0)}K`;
 };
 
-const COLORS = ['#38BDF8', '#3B82F6', '#10B981', '#F59E0B', '#A855F7', '#F43F5E', '#6366F1', '#14B8A6'];
+const COLORS = ['#FFFFFF', '#E4E4E7', '#D4D4D8', '#A1A1AA', '#71717A', '#52525B', '#3F3F46', '#27272A'];
 
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload || !payload[0]) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-[#1a2236] border border-white/10 rounded-lg px-4 py-3 shadow-xl text-xs">
+    <div className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 shadow-2xl text-xs">
       <p className="font-semibold text-white mb-1">{d.name}</p>
-      <p className="text-slate-300">Value: <span className="text-white font-medium">{formatValue(d.value)}</span></p>
-      {d.count !== undefined && <p className="text-slate-400">{d.count} deals in stage</p>}
+      <p className="text-zinc-300">Value: <span className="text-white font-mono font-medium">{formatValue(d.value)}</span></p>
+      {d.count !== undefined && <p className="text-zinc-400">{d.count} deals in stage</p>}
     </div>
   );
 };
 
 export default function FunnelChart({ data }) {
-  if (!data || data.length === 0) return <p className="text-xs text-slate-500">No funnel data available.</p>;
+  if (!data || data.length === 0) return <p className="text-xs text-zinc-500">No funnel data available.</p>;
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56 sm:h-64">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
-          <XAxis type="number" tick={{ fill: '#94a3b8', fontSize: 10 }} tickFormatter={formatValue} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} />
-          <YAxis type="category" dataKey="name" tick={{ fill: '#94a3b8', fontSize: 10 }} width={140} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} />
+          <XAxis type="number" tick={{ fill: '#A1A1AA', fontSize: 9 }} tickFormatter={formatValue} axisLine={{ stroke: '#27272A' }} />
+          <YAxis type="category" dataKey="name" tick={{ fill: '#A1A1AA', fontSize: 9 }} width={110} axisLine={{ stroke: '#27272A' }} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-          <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={28}>
+          <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={24}>
             {data.map((entry, i) => (
               <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}

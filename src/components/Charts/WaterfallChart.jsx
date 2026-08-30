@@ -7,31 +7,33 @@ const formatValue = (val) => {
   return `₹${(val / 1000).toFixed(0)}K`;
 };
 
+const SAAS_COLORS = ['#FFFFFF', '#E4E4E7', '#34D399', '#FBBF24', '#A1A1AA', '#F87171'];
+
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload || !payload[0]) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-[#1a2236] border border-white/10 rounded-lg px-4 py-3 shadow-xl text-xs">
+    <div className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 shadow-2xl text-xs">
       <p className="font-semibold text-white mb-1">{d.name}</p>
-      <p className="text-slate-300">Amount: <span className="text-white font-medium">{formatValue(d.value)}</span></p>
+      <p className="text-zinc-300">Amount: <span className="text-white font-mono font-medium">{formatValue(d.value)}</span></p>
     </div>
   );
 };
 
 export default function WaterfallChart({ data }) {
-  if (!data || data.length === 0) return <p className="text-xs text-slate-500">No waterfall data available.</p>;
+  if (!data || data.length === 0) return <p className="text-xs text-zinc-500">No waterfall data available.</p>;
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56 sm:h-64">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+        <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-          <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} angle={-15} textAnchor="end" height={50} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} tickFormatter={formatValue} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} />
+          <XAxis dataKey="name" tick={{ fill: '#A1A1AA', fontSize: 9 }} axisLine={{ stroke: '#27272A' }} angle={-15} textAnchor="end" height={45} />
+          <YAxis tick={{ fill: '#A1A1AA', fontSize: 9 }} tickFormatter={formatValue} axisLine={{ stroke: '#27272A' }} width={45} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-          <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={50}>
+          <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={36}>
             {data.map((entry, i) => (
-              <Cell key={i} fill={entry.fill || '#38BDF8'} />
+              <Cell key={i} fill={SAAS_COLORS[i % SAAS_COLORS.length]} />
             ))}
           </Bar>
         </BarChart>
