@@ -2,6 +2,9 @@
 
 > An AI-powered Business Intelligence Agent that answers founder-level queries across Monday.com Deals & Work Orders boards with automated data resilience, multi-board cross-analysis, and 1-click Leadership Updates.
 
+## 🌐 Live Hosted Prototype
+**[https://skylark-monday-bi-agent-iota.vercel.app](https://skylark-monday-bi-agent-iota.vercel.app)**
+
 ![Tech Stack](https://img.shields.io/badge/React_18-61DAFB?style=flat&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=flat&logo=vite&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwindcss&logoColor=white)
