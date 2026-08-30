@@ -1,0 +1,31 @@
+# Node & Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & OS
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Python scratch / temp scripts
+__pycache__/
+*.pyc
+install_mingit.py
+inspect_data.py
+inspect_anomalies.py
+setup_git.py
+mingit.zip
