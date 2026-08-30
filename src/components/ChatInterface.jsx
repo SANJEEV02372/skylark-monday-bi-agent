@@ -16,51 +16,59 @@ const FOUNDER_PROMPTS = [
 ];
 
 function MarkdownRenderer({ content }) {
-  // Simple markdown-to-HTML renderer for agent output
-  const html = content
-    .replace(/### (.*)/g, '<h3 class="text-lg font-bold text-white mt-4 mb-2">$1</h3>')
+  if (!content) return null;
+
+  // 1. Process Markdown Tables first
+  const tableRegex = /((?:\|[^\n]+\|\n?)+)/g;
+  let textWithTables = content.replace(tableRegex, (match) => {
+    const lines = match.trim().split('\n').filter(l => l.trim().startsWith('|'));
+    if (lines.length < 2) return match;
+    
+    // Check if second line is separator |:---|---|
+    const hasSeparator = lines[1] && lines[1].includes('---');
+    const headerLine = lines[0];
+    const dataLines = lines.slice(hasSeparator ? 2 : 1);
+
+    const headers = headerLine.split('|').map(c => c.trim()).filter(Boolean);
+    if (headers.length === 0) return match;
+
+    let html = '<div class="my-3 overflow-x-auto rounded-xl border border-white/[0.08] shadow-lg"><table class="w-full text-xs text-left">';
+    html += '<thead><tr class="bg-white/[0.06] border-b border-white/[0.08]">';
+    headers.forEach(h => {
+      html += `<th class="px-3.5 py-2.5 font-semibold text-slate-200 whitespace-nowrap">${h}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    dataLines.forEach((row, ri) => {
+      const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+      if (cells.length === 0) return;
+      html += `<tr class="border-b border-white/[0.03] ${ri % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'} hover:bg-white/[0.04] transition-colors">`;
+      cells.forEach(c => {
+        html += `<td class="px-3.5 py-2 text-slate-300 whitespace-nowrap">${c}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    return html;
+  });
+
+  // 2. Process inline formatting & headers
+  const finalHtml = textWithTables
+    .replace(/### (.*)/g, '<h3 class="text-base font-bold text-white mt-4 mb-2">$1</h3>')
     .replace(/#### (.*)/g, '<h4 class="text-sm font-semibold text-slate-200 mt-3 mb-1.5">$1</h4>')
     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
     .replace(/\*(.*?)\*/g, '<em class="text-slate-300">$1</em>')
-    .replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded bg-white/[0.06] text-sky-300 text-xs font-mono">$1</code>')
-    .replace(/^> (💡|📌|⚡|📊|🚨)(.*)/gm, '<div class="my-2 px-4 py-2.5 rounded-lg bg-sky-500/[0.08] border-l-2 border-sky-400 text-sm text-slate-200">$1$2</div>')
-    .replace(/^> (.*)/gm, '<div class="my-2 px-4 py-2.5 rounded-lg bg-white/[0.03] border-l-2 border-slate-600 text-sm text-slate-300">$1</div>')
-    .replace(/^- (.*)/gm, '<li class="ml-4 text-sm text-slate-300 leading-relaxed list-disc">$1</li>')
-    .replace(/^\d+\. (.*)/gm, '<li class="ml-4 text-sm text-slate-300 leading-relaxed list-decimal">$1</li>')
+    .replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-sky-300 text-xs font-mono">$1</code>')
+    .replace(/^> (💡|📌|⚡|📊|🚨)(.*)/gm, '<div class="my-2.5 px-4 py-3 rounded-xl bg-sky-500/[0.08] border-l-2 border-sky-400 text-xs sm:text-sm text-slate-200 leading-relaxed">$1$2</div>')
+    .replace(/^> (.*)/gm, '<div class="my-2.5 px-4 py-3 rounded-xl bg-white/[0.03] border-l-2 border-slate-600 text-xs sm:text-sm text-slate-300 leading-relaxed">$1</div>')
+    .replace(/^- (.*)/gm, '<li class="ml-4 text-xs sm:text-sm text-slate-300 leading-relaxed list-disc my-0.5">$1</li>')
+    .replace(/^\d+\. (.*)/gm, '<li class="ml-4 text-xs sm:text-sm text-slate-300 leading-relaxed list-decimal my-0.5">$1</li>')
     .replace(/\n---\n/g, '<hr class="my-4 border-white/[0.06]"/>')
     .replace(/\n\n/g, '<div class="h-2"></div>')
     .replace(/\n/g, '<br/>');
 
-  // Parse tables
-  const tableRegex = /\|(.*)\|(?:\n\| ?:?---.*\|)?\n((?:\|.*\|\n?)*)/g;
-  const withTables = html.replace(tableRegex, (match) => {
-    const lines = match.trim().split('<br/>').filter(l => l.trim().startsWith('|'));
-    if (lines.length < 2) return match;
-    const headers = lines[0].split('|').filter(c => c.trim()).map(c => c.trim());
-    const alignLine = lines[1];
-    const isAlignRow = alignLine && alignLine.includes('---');
-    const dataRows = lines.slice(isAlignRow ? 2 : 1);
-
-    let table = '<div class="my-3 overflow-x-auto rounded-lg border border-white/[0.06]"><table class="w-full text-xs">';
-    table += '<thead><tr class="bg-white/[0.04]">';
-    headers.forEach(h => {
-      table += `<th class="px-3 py-2 text-left font-semibold text-slate-300 whitespace-nowrap">${h}</th>`;
-    });
-    table += '</tr></thead><tbody>';
-
-    dataRows.forEach((row, ri) => {
-      const cells = row.split('|').filter(c => c.trim());
-      table += `<tr class="${ri % 2 === 0 ? 'bg-white/[0.01]' : 'bg-white/[0.03]'}">`;
-      cells.forEach(c => {
-        table += `<td class="px-3 py-2 text-slate-300 whitespace-nowrap">${c.trim()}</td>`;
-      });
-      table += '</tr>';
-    });
-    table += '</tbody></table></div>';
-    return table;
-  });
-
-  return <div dangerouslySetInnerHTML={{ __html: withTables }} />;
+  return <div className="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: finalHtml }} />;
 }
 
 function ChartRenderer({ chart }) {
